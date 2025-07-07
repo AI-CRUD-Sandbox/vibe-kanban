@@ -15,6 +15,7 @@ export interface UseTasksResult {
   error: string | null;
   fetchTasks: () => Promise<void>;
   addTask: (columnId: ColumnId) => Promise<Task | null>;
+  createTask: (title: string, description: string, columnId: ColumnId) => Promise<Task | null>;
   updateTask: (task: Task) => Promise<boolean>;
   deleteTask: (taskId: string) => Promise<boolean>;
   emptyColumn: (columnId: ColumnId) => Promise<boolean>;
@@ -55,11 +56,20 @@ export const useTasks = (): UseTasksResult => {
     fetchTasks();
   }, [fetchTasks]);
 
+  // DEPRECATED: Use createTask instead. This is kept for backward compatibility.
   const addTask = useCallback(
     async (columnId: ColumnId): Promise<Task | null> => {
+      console.warn("addTask is deprecated. Use createTask instead.");
+      return createTask("", "", columnId);
+    },
+    [],
+  );
+
+  const createTask = useCallback(
+    async (title: string, description: string, columnId: ColumnId): Promise<Task | null> => {
       const newTaskPayload = {
-        title: "",
-        description: "",
+        title: title.trim(),
+        description: description.trim(),
         column_id: columnId,
       };
 
@@ -82,8 +92,8 @@ export const useTasks = (): UseTasksResult => {
 
         return createdTask;
       } catch (e) {
-        console.error("Failed to add task:", e);
-        setError(e instanceof Error ? e.message : "Failed to add task");
+        console.error("Failed to create task:", e);
+        setError(e instanceof Error ? e.message : "Failed to create task");
         return null;
       }
     },
@@ -261,6 +271,7 @@ export const useTasks = (): UseTasksResult => {
     error,
     fetchTasks,
     addTask,
+    createTask,
     updateTask,
     deleteTask,
     emptyColumn,

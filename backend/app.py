@@ -1,58 +1,83 @@
-from fastapi import FastAPI, Body, Path, HTTPException, Request
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-from pydantic import BaseModel
+# Python 3.7 compatible FastAPI backend
+try:
+    from fastapi import FastAPI, Body, Path, HTTPException, Request
+    from fastapi.staticfiles import StaticFiles
+    from fastapi.responses import FileResponse, JSONResponse
+    from fastapi.middleware.cors import CORSMiddleware
+    from pydantic import BaseModel
+    FASTAPI_AVAILABLE = True
+except ImportError:
+    print("FastAPI not available, falling back to Flask")
+    FASTAPI_AVAILABLE = False
+
 from typing import List, Optional, Dict
 import uuid
 from copy import deepcopy
-from dataclasses import dataclass
 import json
 import os
 from datetime import datetime
 import threading
 from time import sleep
 
-app = FastAPI()
+if FASTAPI_AVAILABLE:
+    app = FastAPI()
 
-from fastapi.middleware.cors import CORSMiddleware
-
-if no_cors := os.getenv("DEV_NO_CORS"):
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    # CORS middleware for development
+    no_cors = os.getenv("DEV_NO_CORS")
+    if no_cors:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
 # Static file serving for React frontend
 frontend_path = os.getenv("STATIC_DIR")
 
 
-# Pydantic models for request bodies and responses
-class TaskCreate(BaseModel):
-    title: str
-    description: Optional[str] = None
-    column_id: str
+# Pydantic models for request bodies and responses (Python 3.7 compatible)
+if FASTAPI_AVAILABLE:
+    class TaskCreate(BaseModel):
+        title: str
+        description: Optional[str] = None
+        column_id: str
 
+    class TaskUpdate(BaseModel):
+        title: str
+        description: Optional[str] = None
 
-class TaskUpdate(BaseModel):
-    title: str
-    description: Optional[str] = None
+    class TaskMove(BaseModel):
+        new_column_id: str
+        new_index: int
 
+    class Task(BaseModel):  # Model for task representation, e.g., for GET response
+        id: str
+        title: str
+        description: Optional[str] = None
+else:
+    # Simple dataclass for Flask fallback
+    from dataclasses import dataclass
 
-class TaskMove(BaseModel):
-    new_column_id: str
-    new_index: int
+    @dataclass
+    class Task:
+        id: str
+        title: str
+        description: Optional[str] = None
 
-
-class Task(BaseModel):  # Model for task representation, e.g., for GET response
-    id: str
-    title: str
-    description: Optional[str] = None
+        def model_dump(self):
+            return {
+                "id": self.id,
+                "title": self.title,
+                "description": self.description
+            }
 
 
 # Database with automatic backup functionality
+if not FASTAPI_AVAILABLE:
+    from dataclasses import dataclass
+
 @dataclass
 class Database:
     _tasks_db: Dict[str, Task] = None
@@ -336,30 +361,45 @@ backup_thread.start()
 
 # --- Endpoints Implementation ---
 
-
 @app.get("/api/tasks")
 async def get_tasks():
-    """
-    Retrieves all tasks organized by columns.
-    In a real application, this would fetch tasks from a database.
-    """
-    return db.serialize()
+    """Returns all tasks organized by columns"""
+    columns_data = db.serialize()
+    # Convert Task objects to dictionaries for JSON serialization
+    serialized_columns = {}
+    for column_id, tasks in columns_data.items():
+        serialized_columns[column_id] = [task.model_dump() for task in tasks]
 
+    return JSONResponse(
+        content=serialized_columns,
+        media_type="application/json"
+    )
 
-@app.post("/api/tasks", status_code=201, response_model=Task)
+@app.post("/api/tasks", status_code=201)
 async def create_task(task_data: TaskCreate):
-    """
-    Creates a new task.
-    """
+    """Create new task and return it as JSON"""
     task_id = str(uuid.uuid4())
-
     new_task = Task(
         id=task_id,
         title=task_data.title,
-        description=task_data.description,
+        description=task_data.description
     )
     db.add(new_task, task_data.column_id)
-    return new_task
+    return JSONResponse(
+        content=new_task.model_dump(),
+        media_type="application/json",
+        status_code=201
+    )
+
+# Add CORS middleware always for development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 
 @app.put("/api/tasks/{task_id}", response_model=Task)
@@ -437,7 +477,7 @@ async def empty_column(
 
 
 # Only enable static file serving if STATIC_DIR is configured
-if frontend_path:
+if FASTAPI_AVAILABLE and frontend_path:
 
     @app.get("/")
     async def serve_root():
@@ -453,3 +493,85 @@ if frontend_path:
         StaticFiles(directory=os.path.join(frontend_path, "assets")),
         name="assets",
     )
+
+# Flask fallback for Python 3.7 compatibility
+if not FASTAPI_AVAILABLE:
+    try:
+        from flask import Flask, jsonify, request
+        from flask_cors import CORS
+
+        flask_app = Flask(__name__)
+        CORS(flask_app)  # Enable CORS for all routes
+
+        @flask_app.route('/api/tasks', methods=['GET'])
+        def get_tasks_flask():
+            """Returns all tasks organized by columns"""
+            columns_data = db.serialize()
+            # Convert Task objects to dictionaries for JSON serialization
+            serialized_columns = {}
+            for column_id, tasks in columns_data.items():
+                serialized_columns[column_id] = [task.model_dump() for task in tasks]
+            return jsonify(serialized_columns)
+
+        @flask_app.route('/api/tasks', methods=['POST'])
+        def create_task_flask():
+            """Create new task and return it as JSON"""
+            data = request.get_json()
+
+            task_id = str(uuid.uuid4())
+            new_task = Task(
+                id=task_id,
+                title=data.get("title", ""),
+                description=data.get("description", "")
+            )
+            db.add(new_task, data.get("column_id", "ideas"))
+            return jsonify(new_task.model_dump()), 201
+
+        @flask_app.route('/api/tasks/<task_id>', methods=['PUT'])
+        def update_task_flask(task_id):
+            """Updates an existing task by its ID"""
+            try:
+                task = db.get(task_id)
+            except KeyError:
+                return jsonify({"error": f"Task with ID '{task_id}' not found"}), 404
+
+            data = request.get_json()
+            update_data = {k: v for k, v in data.items() if v is not None}
+            db.update_task(task_id, **update_data)
+            return jsonify(task.model_dump())
+
+        @flask_app.route('/api/tasks/<task_id>/move', methods=['POST'])
+        def move_task_flask(task_id):
+            """Moves a task to a new column and updates its order"""
+            try:
+                task = db.get(task_id)
+            except KeyError:
+                return jsonify({"error": f"Task with ID '{task_id}' not found"}), 404
+
+            data = request.get_json()
+            db.move(task_id, data.get("new_column_id"), data.get("new_index", 0))
+            return jsonify(task.model_dump())
+
+        @flask_app.route('/api/tasks/<task_id>', methods=['DELETE'])
+        def delete_task_flask(task_id):
+            """Deletes a task by its ID"""
+            try:
+                db.delete(task_id)
+            except KeyError:
+                return jsonify({"error": f"Task with ID '{task_id}' not found"}), 404
+            return '', 204
+
+        @flask_app.route('/api/columns/<column_id>/empty', methods=['DELETE'])
+        def empty_column_flask(column_id):
+            """Empties all tasks in a column"""
+            db.empty_column(column_id)
+            return '', 204
+
+        if __name__ == '__main__':
+            print("Starting Flask server on http://localhost:8000")
+            flask_app.run(host='0.0.0.0', port=8000, debug=True)
+
+    except ImportError:
+        print("Neither FastAPI nor Flask available. Please install one of them.")
+        print("For Python 3.7: pip install flask flask-cors")
+        print("For Python 3.8+: pip install fastapi uvicorn")

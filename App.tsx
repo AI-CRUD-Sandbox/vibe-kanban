@@ -13,6 +13,7 @@ const App: React.FC = () => {
     isLoading,
     error,
     addTask,
+    createTask,
     updateTask,
     deleteTask,
     emptyColumn,
@@ -30,28 +31,43 @@ const App: React.FC = () => {
   // Modal state
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newTaskColumnId, setNewTaskColumnId] = useState<ColumnId | null>(null);
 
   // Event handlers using the custom hooks
   const handleAddTask = useCallback(
-    async (columnId: ColumnId) => {
-      const createdTask = await addTask(columnId);
-      if (createdTask) {
-        setSelectedTask(createdTask);
-        setIsModalOpen(true);
-      }
+    (columnId: ColumnId) => {
+      // Open modal with empty task for the specified column
+      setNewTaskColumnId(columnId);
+      setSelectedTask({
+        id: "", // Empty ID indicates this is a new task
+        title: "",
+        description: "",
+      });
+      setIsModalOpen(true);
     },
-    [addTask],
+    [],
   );
 
   const handleSaveTask = useCallback(
     async (updatedTask: Task) => {
-      const success = await updateTask(updatedTask);
+      let success = false;
+
+      if (updatedTask.id === "" && newTaskColumnId) {
+        // This is a new task - create it
+        const createdTask = await createTask(updatedTask.title, updatedTask.description, newTaskColumnId);
+        success = createdTask !== null;
+      } else {
+        // This is an existing task - update it
+        success = await updateTask(updatedTask);
+      }
+
       if (success) {
         setIsModalOpen(false);
         setSelectedTask(null);
+        setNewTaskColumnId(null);
       }
     },
-    [updateTask],
+    [createTask, updateTask, newTaskColumnId],
   );
 
   const handleOpenModal = useCallback((task: Task) => {
@@ -62,6 +78,7 @@ const App: React.FC = () => {
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setSelectedTask(null);
+    setNewTaskColumnId(null);
   }, []);
 
   const handleDeleteTask = useCallback(
