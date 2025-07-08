@@ -26,7 +26,7 @@ export interface UseTasksResult {
   ) => Promise<boolean>;
 }
 
-export const useTasks = (): UseTasksResult => {
+export const useTasks = (projectId: string = 'default'): UseTasksResult => {
   const [tasksByColumn, setTasksByColumn] = useState<Record<string, Task[]>>(
     {},
   );
@@ -37,7 +37,7 @@ export const useTasks = (): UseTasksResult => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/tasks`);
+      const response = await fetch(`${API_BASE_URL}/api/tasks?project_id=${projectId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -50,7 +50,7 @@ export const useTasks = (): UseTasksResult => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [projectId]);
 
   useEffect(() => {
     fetchTasks();
@@ -74,7 +74,7 @@ export const useTasks = (): UseTasksResult => {
       };
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/tasks`, {
+        const response = await fetch(`${API_BASE_URL}/api/tasks?project_id=${projectId}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newTaskPayload),
@@ -129,7 +129,7 @@ export const useTasks = (): UseTasksResult => {
           return updatedState;
         },
         apiCall: async () => {
-          const response = await fetch(`${API_BASE_URL}/api/tasks/${id}`, {
+          const response = await fetch(`${API_BASE_URL}/api/tasks/${id}?project_id=${projectId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -163,7 +163,7 @@ export const useTasks = (): UseTasksResult => {
           return updatedState;
         },
         apiCall: async () => {
-          const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
+          const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}?project_id=${projectId}`, {
             method: "DELETE",
           });
           if (!response.ok) {
