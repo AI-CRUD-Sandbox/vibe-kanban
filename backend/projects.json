@@ -1,0 +1,72 @@
+[
+  {
+    "id": "default",
+    "name": "My Kanban Board",
+    "description": "Default project for task management",
+    "color": "#3B82F6",
+    "icon": "\ud83d\udccb",
+    "createdAt": "2025-07-07T23:25:03.752649",
+    "updatedAt": "2025-07-07T23:25:03.752661",
+    "isActive": true,
+    "metadata": {
+      "taskCount": 0,
+      "completedTasks": 0,
+      "lastActivity": "2025-07-07T23:25:03.752663",
+      "tags": []
+    },
+    "settings": {
+      "columns": [
+        {
+          "id": "ideas",
+          "name": "Ideas",
+          "color": "blue",
+          "isVisible": true
+        },
+        {
+          "id": "selected",
+          "name": "Selected",
+          "color": "yellow",
+          "isVisible": true
+        },
+        {
+          "id": "in_progress",
+          "name": "In Progress",
+          "color": "orange",
+          "limit": 3,
+          "isVisible": true
+        },
+        {
+          "id": "parked",
+          "name": "Parked",
+          "color": "gray",
+          "isVisible": true
+        },
+        {
+          "id": "done",
+          "name": "Done",
+          "color": "green",
+          "isVisible": true
+        }
+      ],
+      "aiSettings": {
+        "enabled": true,
+        "defaultService": "openAI",
+        "autoSuggestTasks": true,
+        "contextPrompt": "You are helping with project management tasks."
+      },
+      "workflow": {
+        "autoArchiveCompleted": false,
+        "autoArchiveDays": 30,
+        "requireTaskDescription": false,
+        "enableTimeTracking": false
+      },
+      "notifications": {
+        "enabled": true,
+        "dailyDigest": false,
+        "taskReminders": true,
+        "aiSuggestions": true
+      },
+      "integrations": {}
+    }
+  }
+]

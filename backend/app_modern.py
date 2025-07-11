@@ -65,7 +65,7 @@ class Database:
         self._columns = {
             "ideas": [],
             "selected": [],
-            "in_progress": [],
+            "inProgress": [],
             "parked": [],
             "done": []
         }

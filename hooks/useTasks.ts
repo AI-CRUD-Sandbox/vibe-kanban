@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { Task, ColumnId } from "../types";
 import { useOptimisticUpdate } from "./useOptimisticUpdate";
+import { logger, logApiCall, logApiResponse, logError } from "../utils/logger";
 
-// Use environment variable for API base URL, fallback to current origin or localhost
+// Use environment variable for API base URL, fallback to backend localhost
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  (typeof window !== "undefined"
-    ? window.location.origin
-    : "http://localhost:8000");
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 export interface UseTasksResult {
   tasksByColumn: Record<string, Task[]>;
@@ -37,15 +35,23 @@ export const useTasks = (projectId: string = 'default'): UseTasksResult => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/tasks?project_id=${projectId}`);
+      const url = `${API_BASE_URL}/api/tasks?project_id=${projectId}`;
+      logApiCall('GET', url);
+
+      const response = await fetch(url);
+      logApiResponse('GET', url, response.status);
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data: Record<string, Task[]> = await response.json();
       setTasksByColumn(data);
+
+      logger.info(`Successfully loaded ${Object.values(data).flat().length} tasks`, { projectId });
     } catch (e) {
-      console.error("Failed to fetch tasks:", e);
-      setError(e instanceof Error ? e.message : "An unknown error occurred");
+      const error = e instanceof Error ? e : new Error("An unknown error occurred");
+      logError("Failed to fetch tasks", error, "useTasks");
+      setError(error.message);
       setTasksByColumn({});
     } finally {
       setIsLoading(false);

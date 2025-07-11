@@ -18,6 +18,7 @@ import os
 from datetime import datetime
 import threading
 from time import sleep
+from dataclasses import dataclass
 
 if FASTAPI_AVAILABLE:
     app = FastAPI()
@@ -375,30 +376,30 @@ async def get_tasks():
         media_type="application/json"
     )
 
-@app.post("/api/tasks", status_code=201)
-async def create_task(task_data: TaskCreate):
-    """Create new task and return it as JSON"""
-    task_id = str(uuid.uuid4())
-    new_task = Task(
-        id=task_id,
-        title=task_data.title,
-        description=task_data.description
-    )
-    db.add(new_task, task_data.column_id)
-    return JSONResponse(
-        content=new_task.model_dump(),
-        media_type="application/json",
-        status_code=201
-    )
+    @app.post("/api/tasks", status_code=201)
+    async def create_task(task_data: TaskCreate):
+        """Create new task and return it as JSON"""
+        task_id = str(uuid.uuid4())
+        new_task = Task(
+            id=task_id,
+            title=task_data.title,
+            description=task_data.description
+        )
+        db.add(new_task, task_data.column_id)
+        return JSONResponse(
+            content=new_task.model_dump(),
+            media_type="application/json",
+            status_code=201
+        )
 
-# Add CORS middleware always for development
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    # Add CORS middleware always for development
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 
@@ -493,6 +494,12 @@ if FASTAPI_AVAILABLE and frontend_path:
         StaticFiles(directory=os.path.join(frontend_path, "assets")),
         name="assets",
     )
+
+    # FastAPI server startup
+    if __name__ == '__main__':
+        import uvicorn
+        print("Starting FastAPI server on http://localhost:8000")
+        uvicorn.run(app, host="0.0.0.0", port=8000)
 
 # Flask fallback for Python 3.7 compatibility
 if not FASTAPI_AVAILABLE:

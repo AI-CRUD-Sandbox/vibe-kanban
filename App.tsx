@@ -6,12 +6,35 @@ import TaskModal from "./components/TaskModal";
 import Settings from "./components/Settings";
 import AIChat from "./components/AIChat";
 import AISuggestions from "./components/AISuggestions";
+import ErrorBoundary from "./components/ErrorBoundary";
+// Temporarily disabled project management imports
+// import ProjectSwitcher from "./components/ProjectSwitcher";
+// import ProjectManager from "./components/ProjectManager";
 import { useTasks } from "./hooks/useTasks";
 import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { useSettings } from "./hooks/useSettings";
 import { useAI } from "./hooks/useAI";
+import { logger, logUserAction } from "./utils/logger";
+// import { useProjects } from "./hooks/useProjects";
+// import { PROJECT_TEMPLATES } from "./types/project";
 
 const App: React.FC = () => {
+  // Project management hook - temporarily disabled to prevent infinite loops
+  // TODO: Re-enable after fixing the infinite loop issue
+  // const {
+  //   projects,
+  //   currentProject,
+  //   isLoading: projectsLoading,
+  //   error: projectsError,
+  //   createProject,
+  //   updateProject,
+  //   deleteProject,
+  //   switchProject,
+  //   duplicateProject,
+  //   exportProject,
+  //   importProject,
+  // } = useProjects();
+
   // Use custom hooks for data and drag/drop logic
   const {
     tasksByColumn,
@@ -23,7 +46,7 @@ const App: React.FC = () => {
     deleteTask,
     emptyColumn,
     moveTask,
-  } = useTasks();
+  } = useTasks('default');
 
   // Settings hook
   const {
@@ -69,6 +92,7 @@ const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [isAISuggestionsOpen, setIsAISuggestionsOpen] = useState(false);
+  const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
   const [taskSuggestions, setTaskSuggestions] = useState<any[]>([]);
   const [codeSuggestions, setCodeSuggestions] = useState<any[]>([]);
 
@@ -183,6 +207,20 @@ const App: React.FC = () => {
     [emptyColumn],
   );
 
+  // Project management handlers - temporarily disabled
+  // TODO: Re-enable when useProjects hook is fixed
+  // const handleCreateProject = useCallback(async () => {
+  //   setIsProjectManagerOpen(true);
+  // }, []);
+
+  // const handleManageProjects = useCallback(async () => {
+  //   setIsProjectManagerOpen(true);
+  // }, []);
+
+  // const handleSwitchProject = useCallback(async (projectId: string) => {
+  //   await switchProject(projectId);
+  // }, [switchProject]);
+
   // Drag and drop handlers
   const handleTaskDrop = useCallback(
     (event: React.DragEvent, targetColumnId: ColumnId) => {
@@ -200,7 +238,10 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col p-4 bg-gray-900 text-gray-100">
+    <ErrorBoundary onError={(error, errorInfo) => {
+      logger.error('Application Error Boundary triggered', { error, errorInfo });
+    }}>
+      <div className="min-h-screen flex flex-col p-4 bg-gray-900 text-gray-100">
       <header className="mb-6 flex justify-between items-center">
         <div className="flex-1"></div>
         <div className="text-center">
@@ -318,7 +359,8 @@ const App: React.FC = () => {
         isLoading={aiLoading}
         error={aiError}
       />
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 };
 

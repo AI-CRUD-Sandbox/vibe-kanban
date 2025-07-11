@@ -1,0 +1,117 @@
+{
+  "tasks": {
+    "46af16d8-877b-4b46-803e-e07801c7ae8b": {
+      "id": "46af16d8-877b-4b46-803e-e07801c7ae8b",
+      "title": "Ask Claude AI to make Half-Life 3 as an easter egg",
+      "description": ""
+    },
+    "3f6b461b-0961-47d0-9648-a8ca0ff0c665": {
+      "id": "3f6b461b-0961-47d0-9648-a8ca0ff0c665",
+      "title": "Make the app web-scale",
+      "description": ""
+    },
+    "455f8d32-56e0-434b-aff7-406bee94a698": {
+      "id": "455f8d32-56e0-434b-aff7-406bee94a698",
+      "title": "Implement User accounts and Auth/Autz",
+      "description": ""
+    },
+    "1a0c0c37-e077-4a80-93b5-60678975b158": {
+      "id": "1a0c0c37-e077-4a80-93b5-60678975b158",
+      "title": "Re-design the API endpoints",
+      "description": ""
+    },
+    "a8e7fb90-571b-4ce2-84a5-238d84e697ee": {
+      "id": "a8e7fb90-571b-4ce2-84a5-238d84e697ee",
+      "title": "Holistically administrate exceptional synergies",
+      "description": ""
+    },
+    "dd1f81ef-ceef-4a83-9509-2c45d952e053": {
+      "id": "dd1f81ef-ceef-4a83-9509-2c45d952e053",
+      "title": "Ask Claude AI to make Half-Life 3 as an easter egg",
+      "description": ""
+    },
+    "40d74bae-fbcc-48b0-b22c-e0c75864277d": {
+      "id": "40d74bae-fbcc-48b0-b22c-e0c75864277d",
+      "title": "Make the app web-scale",
+      "description": ""
+    },
+    "92d8232f-5a9b-442a-990b-ee54b0d8beca": {
+      "id": "92d8232f-5a9b-442a-990b-ee54b0d8beca",
+      "title": "Implement User accounts and Auth/Autz",
+      "description": ""
+    },
+    "f7f86b8f-fce1-459f-bf11-cf6019a8cd2f": {
+      "id": "f7f86b8f-fce1-459f-bf11-cf6019a8cd2f",
+      "title": "Re-design the API endpoints",
+      "description": ""
+    },
+    "47776adf-d369-4270-804d-6fe367cabcd8": {
+      "id": "47776adf-d369-4270-804d-6fe367cabcd8",
+      "title": "Holistically administrate exceptional synergies",
+      "description": ""
+    },
+    "a44989cd-f685-49c4-98a9-a850a0a75158": {
+      "id": "a44989cd-f685-49c4-98a9-a850a0a75158",
+      "title": "Test Task from E2E",
+      "description": "This is a test task created by Playwright"
+    },
+    "ed7eaf08-050e-47a7-acd1-fa85b1df1dd5": {
+      "id": "ed7eaf08-050e-47a7-acd1-fa85b1df1dd5",
+      "title": "Persistent Test Task",
+      "description": "This task should persist after refresh"
+    },
+    "67b9d2b4-ec7f-4b4b-a3c1-02cae0a80268": {
+      "id": "67b9d2b4-ec7f-4b4b-a3c1-02cae0a80268",
+      "title": "Persistent Test Task",
+      "description": "This task should persist after refresh"
+    },
+    "08359e52-4f8c-492b-9461-cdb546a4fb1c": {
+      "id": "08359e52-4f8c-492b-9461-cdb546a4fb1c",
+      "title": "Test Task from E2E",
+      "description": "This is a test task created by Playwright"
+    },
+    "18861065-bff3-4309-94e9-6c7a32305ba4": {
+      "id": "18861065-bff3-4309-94e9-6c7a32305ba4",
+      "title": "Test Task from E2E",
+      "description": "This is a test task created by Playwright"
+    },
+    "79c3bc02-6e13-4ac5-bb1d-4e5e8cd8ea29": {
+      "id": "79c3bc02-6e13-4ac5-bb1d-4e5e8cd8ea29",
+      "title": "Persistent Test Task",
+      "description": "This task should persist after refresh"
+    },
+    "1c66eda6-c0df-4d34-9157-fed4b9eaa167": {
+      "id": "1c66eda6-c0df-4d34-9157-fed4b9eaa167",
+      "title": "Test Task from E2E",
+      "description": "This is a test task created by Playwright"
+    },
+    "991f795a-1394-4f67-bd8c-34a35ea04cda": {
+      "id": "991f795a-1394-4f67-bd8c-34a35ea04cda",
+      "title": "Persistent Test Task",
+      "description": "This task should persist after refresh"
+    }
+  },
+  "columns": {
+    "ideas": [
+      "dd1f81ef-ceef-4a83-9509-2c45d952e053",
+      "40d74bae-fbcc-48b0-b22c-e0c75864277d",
+      "92d8232f-5a9b-442a-990b-ee54b0d8beca",
+      "a44989cd-f685-49c4-98a9-a850a0a75158",
+      "ed7eaf08-050e-47a7-acd1-fa85b1df1dd5",
+      "67b9d2b4-ec7f-4b4b-a3c1-02cae0a80268",
+      "08359e52-4f8c-492b-9461-cdb546a4fb1c",
+      "18861065-bff3-4309-94e9-6c7a32305ba4",
+      "79c3bc02-6e13-4ac5-bb1d-4e5e8cd8ea29",
+      "1c66eda6-c0df-4d34-9157-fed4b9eaa167",
+      "991f795a-1394-4f67-bd8c-34a35ea04cda"
+    ],
+    "selected": [
+      "f7f86b8f-fce1-459f-bf11-cf6019a8cd2f",
+      "47776adf-d369-4270-804d-6fe367cabcd8"
+    ],
+    "inProgress": [],
+    "parked": [],
+    "done": []
+  },
+  "backup_timestamp": "2025-07-08T00:08:51.207196"
+}

@@ -1,0 +1,42 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - heading "🚀 KanFlow" [level=1]
+  - paragraph: Vibe-driven task management that just works
+  - button "AI Assistant":
+    - img
+  - button "AI Suggestions":
+    - img
+  - button "Settings":
+    - img
+- main:
+  - heading "💡 Ideas (6)" [level=2]
+  - button "Add new task to 💡 Ideas":
+    - img
+  - heading "Ask Claude AI to make Half-Life 3 as an easter egg" [level=3]
+  - heading "Make the app web-scale" [level=3]
+  - heading "Implement User accounts and Auth/Autz" [level=3]
+  - heading "Test Task from E2E" [level=3]
+  - heading "Persistent Test Task" [level=3]
+  - heading "Test Task from E2E" [level=3]
+  - heading "🎯 Selected (2)" [level=2]
+  - button "Add new task to 🎯 Selected":
+    - img
+  - heading "Re-design the API endpoints" [level=3]
+  - heading "Holistically administrate exceptional synergies" [level=3]
+  - heading "⚙️ In Progress (0)" [level=2]
+  - button "Add new task to ⚙️ In Progress":
+    - img
+  - text: Drag tasks here or add a new one using the '+' button above.
+  - heading "🅿️ Parked (0)" [level=2]
+  - button "Add new task to 🅿️ Parked":
+    - img
+  - text: Drag tasks here or add a new one using the '+' button above.
+  - heading "✅ Done (0)" [level=2]
+  - button "Add new task to ✅ Done":
+    - img
+  - button "Empty all tasks in ✅ Done":
+    - img
+  - text: Drag tasks here or add a new one using the '+' button above.
+```

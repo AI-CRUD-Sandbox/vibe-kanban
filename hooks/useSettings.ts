@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { AppSettings, DEFAULT_SETTINGS } from '../types/settings';
 
 const SETTINGS_STORAGE_KEY = 'vibe-kanban-settings';
-const SETTINGS_API_ENDPOINT = '/api/settings';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const SETTINGS_API_ENDPOINT = `${API_BASE_URL}/api/settings`;
 
 // Simple encryption/decryption for API keys (base64 + simple cipher)
 const encryptApiKey = (key: string): string => {
